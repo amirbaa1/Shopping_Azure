@@ -1,0 +1,248 @@
+version: '3.4'
+
+services:
+  #  rabbitmq:
+  #     container_name: rabbitmq
+  #     restart: always
+  #     environment:
+  #       - "TZ: Asia/Tehran"
+  #     ports:
+  #       - "5672:5672"
+  #       - "15672:15672"
+  #  
+  # eureka:
+  #   container_name: eureka
+  #   restart: always
+  #   ports:
+  #     - "8761:8761"
+  
+  #  seq:
+  #    container_name: seq
+  #    restart: always
+  #    ports:
+  #      - "5341:80"
+  #    environment:
+  #      - ACCEPT_EULA=Y
+  #
+  #  prometheus:
+  #    container_name: prometheus
+  #    restart: always
+  #    ports:
+  #      - "9090:9090" 
+  #    volumes:
+  #      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+  #
+  #    
+  #  grafana:
+  #    container_name: grafana
+  #    restart: always
+  #    ports:
+  #      - "3000:3000"
+  #    depends_on:
+  #      - prometheus
+  
+  
+  #  elasticsearch:
+  #    container_name: elasticsearch
+  #    ports:
+  #      - "9200:9200"
+  #    volumes:
+  #      - elasticsearch_data:/usr/share/elasticsearch/data
+  #    environment:
+  #      - xpack.security.enabled=false
+  #      - discovery.type=single-node
+  #    networks:
+  #      - elastic_net
+  #  
+  #  kibana:
+  #    container_name: kibana
+  #    restart: always
+  #    ports:
+  #      - "5601:5601"
+  #    environment:
+  #      - ELASTICSEARCH_URL=http://localhost:9200
+  #    depends_on:
+  #      - elasticsearch
+  #    networks:
+  #      - elastic_net
+  
+  #  productdb:
+  #    container_name: productdb
+  #    environment:
+  #      - POSTGRES_USER=Admin
+  #      - POSTGRES_PASSWORD=admin1234
+  #      - POSTGRES_DB=productdb
+  #    restart: always
+  #    ports:
+  #      - "5432:5432"
+  #    volumes:
+  #      - postgres_data:/var/lib/postgresql/data/
+  #  
+  #  
+  #  basketdb:
+  #    container_name: basketdb
+  #    environment:
+  #      - POSTGRES_USER=Admin
+  #      - POSTGRES_PASSWORD=admin1234
+  #      - POSTGRES_DB=basketdb
+  #    restart: always
+  #    ports:
+  #      - "5432:5432"
+  #    volumes:
+  #      - postgres_data:/var/lib/postgresql/data/
+  #  
+  #  
+  #  orderdb:
+  #    container_name: orderdb
+  #    environment:
+  #      - POSTGRES_USER=Admin
+  #      - POSTGRES_PASSWORD=admin1234
+  #      - POSTGRES_DB=orderdb
+  #    restart: always
+  #    ports:
+  #      - "5432:5432"
+  #    volumes:
+  #      - postgres_data:/var/lib/postgresql/data/
+  #  
+  #  
+  #  paydb:
+  #    container_name: paydb
+  #    environment:
+  #      - POSTGRES_USER=Admin
+  #      - POSTGRES_PASSWORD=admin1234
+  #      - POSTGRES_DB=paydb
+  #    restart: always
+  #    ports:
+  #      - "5432:5432"
+  #    volumes:
+  #      - postgres_data:/var/lib/postgresql/data/
+  #  
+  #  
+
+  identitydb:
+    container_name: identitydb
+    environment:
+      - POSTGRES_USER=Admin
+      - POSTGRES_PASSWORD=admin1234
+      - POSTGRES_DB=identitydb
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+  #
+  #
+  #  discountdb:
+  #    container_name: discountdb
+  #    restart: always
+  #    ports:
+  #      - "27017:27017"
+  #    volumes:
+  #      - mongo_data:/data/db
+  
+  
+  ##########################################
+  
+  
+  #  productservice:
+  #    container_name: ProductService
+  #    environment:
+  #      - ASPNETCORE_ENVIRONMENT=Development
+  #      - "ProductConnectionString : Host=productdb;Port=5432;Database=Productdb;Username=postgres;Password=amir$$1379;"
+  #    ports:
+  #      - "8001:80"
+  #
+  #
+  #  basketservice:
+  #    container_name: BasketService
+  #    environment:
+  #      - ASPNETCORE_ENVIRONMENT=Development
+  #      - "BasketConnectionString:Host=basketdb;Port=5432;Database=basketdb;Username=postgres;Password=amir$$1379;"
+  #    ports:
+  #      - "8002:80"
+  #
+  #  orderservice:
+  #    container_name: OrderService
+  #    environment:
+  #      - ASPNETCORE_ENVIRONMENT=Development
+  #      - "OrderConnectionString:Host=orderdb;Port=5432;Database=orderdb;Username=postgres;Password=amir$$1379;"
+  #    ports:
+  #      - "8003:80"
+  #  
+  #  discountgrpcservice:
+  #    container_name: DiscountGRPC
+  #    environment:
+  #      - ASPNETCORE_ENVIRONMENT=Development
+  #      - ASPNETCORE_HTTP_PORTS=8080
+  #      - ASPNETCORE_HTTPS_PORTS=8081
+  #      - "DiscountStoreDatabase:ConnectionString=mongodb://localhost:27017"
+  #    ports:
+  #      - "8080"
+  #      - "8081"
+  #    volumes:
+  #      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+  #      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+  #
+  #  payment.api:
+  #    container_name: PayService
+  #    environment:
+  #      - ASPNETCORE_ENVIRONMENT=Development
+  #      - "PaymentConnectionString:Host=paydb;Port=5432;Database=paydb;Username=postgres;Password=amir$$1379;"
+  #    ports:
+  #      - "2002:80"
+  #
+  #
+  
+  
+  #  webshop:
+  #    container_name: WebApp
+  #    environment:
+  #      - ASPNETCORE_ENVIRONMENT=Development
+  #    ports:
+  #      - "8080:80"
+  #
+  #  webapp.admin:
+  #    container_name: WebAppAdmin
+  #    environment:
+  #      - ASPNETCORE_ENVIRONMENT=Development
+  #    ports:
+  #      - "8081:80"
+  #
+  #
+  #  apigateway:
+  #    container_name: Ocelot.Api
+  #    environment:
+  #      - ASPNETCORE_ENVIRONMENT=Development
+  #    ports:
+  #      - "8070:80"
+  #
+  #
+  #  apigateway.admin:
+  #    container_name: Ocelot.ApiAdmin
+  #    environment:
+  #      - ASPNETCORE_ENVIRONMENT=Development
+  #    ports:
+  #      - "8071:80"
+
+
+  webidentityserver:
+    container_name: webidentityserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8081
+      - "ConnectionStrings:IdentityConnectionString=Host=identitydb;Port=5432;Database=identitydb;Username=Admin;Password=admin1234;"
+    ports:
+      - "8081"
+
+#    volumes:
+#      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+#      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+
+volumes:
+  elasticsearch_data:
+  postgres_data:
+
+networks:
+  elastic_net:
+    driver: bridge
+

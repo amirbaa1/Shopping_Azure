@@ -1,0 +1,195 @@
+﻿@page
+@model WebShop.Pages.basket.itemModel
+@{
+}
+
+
+@if (Model.Basket != null)
+{
+    <div class="row text-right">
+        <table class="table col-md-9">
+            <thead>
+            <tr>
+                <th>
+                    id/basketID
+                </th>
+                <th>
+                    productID
+                </th>
+                <th>
+                    productName
+                </th>
+                <th>
+                    unitPrice
+                </th>
+                <th>
+                    quantity
+                </th>
+                <th>
+                    <label>قیمت کل</label>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model.Basket.Items)
+            {
+                <tr>
+                    <td>
+                        @item.Id/@item.BasketId
+                    </td>
+                    <td>
+                        @item.ProductId
+                    </td>
+                    <td>
+                        @item.ProductName
+                    </td>
+                    <td>
+                        <b class="text-success">@item.UnitPrice</b>
+                    </td>
+                    <td>
+                        @item.Quantity
+                    </td>
+                    <td>
+                        <b class="text-success">@item.TotalPrice()</b>
+                    </td>
+                    <td class="row">
+                        <form method="post" asp-page-handler="DeleteBasket">
+                            <input type="hidden" name="Id" value="@item.Id"/>
+                            <button type="submit" class="btn btn-danger">حذف</button>
+                        </form>
+                        <button class="btn btn-warning" onclick="ShowEdit('@item.BasketId','@item.Quantity')">ویرایش تعداد</button>
+
+                    </td>
+                </tr>
+            }
+
+            </tbody>
+            <tfoot>
+            <tr class="bg-dark text-white">
+
+                <td>
+                    قیمت کل
+                </td>
+                <td>
+                </td>
+                <td>
+                </td>
+                <td>
+                    <b>@Model.Basket.TotalPrice()</b>
+                </td>
+                <td>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+        <div class="col-md-3 card">
+            <div class="row col-md-12 card-body ">
+                <label>استفاده از کد تخفیف</label>
+                <input type="text" class="form-control col-md-12" id="txtDiscountCode" placeholder="کد تخفیف را وارد نمایید"/>
+                <button type="submit" onclick="ApplyDiscountCode()" id="btnApplyDiscountCode" class="btn btn-warning btn-sm col-md-12">اعمال کد تخفیف</button>
+
+                <hr/>
+                @if (Model.Basket.DiscountDetail != null)
+                {
+                    <div>
+                        <b> کد تخفیف استفاده شده :</b>
+                        <small> @Model.Basket.DiscountDetail.DiscountCode</small>
+
+                        <b class="col-md-12">مبلغ : @Model.Basket.DiscountDetail.Amount.ToString("n0") تومان</b>
+                    </div>
+                }
+
+            </div>
+        </div>
+
+    </div>
+    <form method="post" asp-page-handler="BasketCheckout">
+        <button type="submit" class="btn btn-success col-md-12">ثبت سفارش</button>
+    </form>
+}
+else
+{
+    <p>NOTFOUNT</p>
+}
+
+<br/>
+
+
+<div class="modal fade" id="editQuantityModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" asp-page-handler="EditBasket">
+                <div class="modal-body">
+                    <input type="hidden" id="BasketItemId" name="BasketItemId" value=""/>
+                    <input type="number" id="quantity" name="quantity" value=""/>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">برگشت</button>
+                    <button type="submit" class="btn btn-primary">ثبت تغییرات</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/Basket.js" asp-append-version="true"></script>
+
+
+@section Scripts
+{
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <script>
+
+        function ShowEdit(BasketItemId, quantity) {
+            $("#BasketItemId").val(BasketItemId);
+            $("#quantity").val(quantity);
+            $("#editQuantityModal").modal({
+                fadeDuration: 400,
+                fadeDelay: 0.10
+            });
+        }
+
+        function ApplyDiscountCode() {
+
+            var code = $("#txtDiscountCode").val();
+
+            var postData = { 'DiscountCode': code };
+
+            $.ajax({
+                contentType: 'application/x-www-form-urlencoded',
+                dataType: 'json',
+                type: "POST",
+                url: "ApplyDiscount",
+                data: postData,
+                success: function (data) {
+                    if (data.isSuccess) {
+                        swal({
+                            title: "بسیار خوب!",
+                            text: data.message,
+                            icon: "warning",
+                            button: "خب",
+                        });
+                    }
+                    else {
+                        swal({
+                            title: "هشدار!",
+                            text: data.message,
+                            icon: "warning",
+                            button: "خب",
+                        });
+                    }
+                }
+            });
+        }
+
+    </script>
+
+
+}

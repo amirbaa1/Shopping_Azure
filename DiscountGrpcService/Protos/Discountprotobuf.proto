@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+option csharp_namespace = "DiscountGrpcService.Protos";
+
+service DiscountGrpcServiceProto{
+  rpc GetDiscountByCode(RequestGetDiscountByCode) returns(ResultGetDiscountByCode);
+  rpc GetDiscountById(RequestGetDiscountById)returns(ResultGetDiscountByCode);
+  rpc UseDiscount(RequestUseDiscount) returns(ResultUseDiscount);
+  rpc AddDiscount(RequestAddDiscount) returns(ResultAddDiscount);
+}
+
+message RequestGetDiscountByCode{
+  string Code = 1;
+}
+
+message RequestGetDiscountById{
+  string Id = 1;
+}
+
+message ResultGetDiscountByCode{
+  DiscountInfo Data = 1;
+  bool isSuccess = 2;
+  string Message = 3;
+}
+
+message DiscountInfo{
+  string Id = 1;
+  int32 Amount = 2;
+  string Code = 3;
+  bool Used = 4;
+}
+
+message RequestUseDiscount{
+  string Id = 1;
+}
+
+message ResultUseDiscount{
+  bool isSuccess = 1;
+}
+
+message RequestAddDiscount{
+  int32 Amount = 1;
+  string Code = 3;
+}
+
+message ResultAddDiscount{
+  bool isSuccess = 1;
+}

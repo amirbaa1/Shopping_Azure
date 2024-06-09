@@ -1,0 +1,86 @@
+@page
+@model WebShop.Pages.Order.Detail
+
+@{
+}
+
+
+<h2>اطلاعات بیشتر از سفارش شما</h2>
+<div class="row col-md-12">
+
+    <div class="row col-md-4">
+        <b>اطلاعات سفارش</b>
+
+        <table class="table table-bordered table-hover table-secondary  ">
+            <tr>
+                <td>تاریخ ثبت</td>
+                <td>مبلغ کل</td>
+                <td>وضعیت پرداخت</td>
+            </tr>
+            <tr>
+                <td>@Model.Order.OrderPlaced</td>
+                <td>@Model.Order.TotalPrice</td>
+                <td>@Model.Order.OrderPide</td>
+            </tr>
+        </table>
+    </div>
+    <div class="row col-md-6">
+        <b>آدرس تحویل</b>
+        <table class="table table-bordered table-hover">
+            <tr>
+                <td>گیرنده</td>
+                <td>تلفن</td>
+                <td>آدرس</td>
+            </tr>
+            <tr>
+                <td> @Model.Order.FirstName @Model.Order.LastName</td>
+                <td>@Model.Order.PhoneNumber </td>
+                <td> @Model.Order.Address </td>
+            </tr>
+        </table>
+    </div>
+
+
+    <div class="row col-md-12">
+        <b>محصولات در این سفارش</b>
+        <table class="table table-bordered table-hover">
+            <tr>
+                <td>Id</td>
+                <td>نام محصول</td>
+                <td>قیمت واحد</td>
+                <td>تعداد</td>
+                <td>قیمت کل</td>
+                <td>پرداخت</td>
+            </tr>
+            @foreach (var item in Model.Order.OrderLines)
+            {
+                <tr>
+
+                    <td>@item.Id</td>
+                    <td>@item.ProductName</td>
+                    <td>@item.ProductPrice</td>
+                    <td>@item.Quantity</td>
+                    <td>
+                        @{ double totalPrice = item.ProductPrice * item.Quantity; }
+                        <b> @totalPrice.ToString("n0") </b>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+
+    <div class="row col-md-12">
+        <b>محصولات در این سفارش</b>
+        <table class="table table-bordered table-hover">
+            <tr>
+                 <td>مبلغ تخفیف</td>
+                  @* <td> <b>@(Model.OrderLines.Sum(p=> p.Price * p.Quantity) -  Model.TotalPrice )</b>  </td>  *@
+                  @* <td>@Model.Order.OrderLines[0].d</td> *@
+                <td>@(Model.Order.OrderLines.Sum(p => p.ProductPrice * p.Quantity) - (-Model.Order.TotalPrice))</td>
+                <td>قیمت کل</td>
+                 <td>@Model.Order.TotalPrice </td>
+            </tr>
+
+        </table>
+    </div>
+</div>

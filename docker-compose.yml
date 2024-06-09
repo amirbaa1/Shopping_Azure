@@ -1,0 +1,102 @@
+version: '3.4'
+
+services:
+  #  rabbitmq:
+  #     image: rabbitmq:3-management-alpine
+
+  # eureka:
+  #   image: steeltoeoss/eureka-se
+  
+  #  seq:
+  #    image: datalust/seq
+  
+  #  prometheus:
+  #    image: prom/prometheus
+  #
+  #  grafana:
+  #    image: grafana/grafana
+  
+  #  kibana:
+  #    image: kibana:8.13.4
+  #  
+  #  elasticsearch:
+  #    image: elasticsearch:8.13.4
+  #
+  
+  identitydb:
+    image: postgres
+  
+  #  productservice:
+  #    image: ${DOCKER_REGISTRY-}productservice
+  #    build:
+  #      context: .
+  #      dockerfile: ProductService/Dockerfile
+  #
+  #
+  #  basketservice:
+  #    image: ${DOCKER_REGISTRY-}basketservice
+  #    build:
+  #      context: .
+  #      dockerfile: BasketService/Dockerfile
+  #
+  #
+  #  orderservice:
+  #    image: ${DOCKER_REGISTRY-}orderservice
+  #    build:
+  #      context: .
+  #      dockerfile: OrderService/Dockerfile
+  #
+  #
+  #  discountgrpcservice:
+  #    image: ${DOCKER_REGISTRY-}discountgrpcservice
+  #    build:
+  #      context: .
+  #      dockerfile: DiscountGrpcService/Dockerfile
+  #
+  #
+  #  payment.api:
+  #    image: ${DOCKER_REGISTRY-}paymentapi
+  #    build:
+  #      context: .
+  #      dockerfile: Payment/Payment.API/Dockerfile
+  #
+  #
+  
+  #
+  #
+  #  webshop:
+  #    image: ${DOCKER_REGISTRY-}webshop
+  #    build:
+  #      context: .
+  #      dockerfile: WebShop/Dockerfile
+  #
+  #
+  #  webapp.admin:
+  #    image: ${DOCKER_REGISTRY-}webappadmin
+  #    build:
+  #      context: .
+  #      dockerfile: WebApp.Admin/Dockerfile
+  #
+  #
+  #  apigateway:
+  #    image: ${DOCKER_REGISTRY-}apigateway
+  #    build:
+  #      context: .
+  #      dockerfile: ApiGateway/Dockerfile
+  #
+  #
+  #  apigateway.admin:
+  #    image: ${DOCKER_REGISTRY-}apigatewayadmin
+  #    build:
+  #      context: .
+  #      dockerfile: ApiGateway.Admin/Dockerfile
+  #
+
+
+
+  webidentityserver:
+    image: ${DOCKER_REGISTRY-}webidentityserver
+    build:
+      context: .
+      dockerfile: WebIdentityServer/Dockerfile
+

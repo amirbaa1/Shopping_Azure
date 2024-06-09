@@ -1,0 +1,68 @@
+@page
+@model WebShop.Pages.Order.Index
+
+@{
+}
+
+<table class="table col-md-9">
+    <thead>
+    <tr>
+        <th>
+            <label>تاریخ ثبت</label>
+
+        </th>
+        <th>
+            <label>تعداد محصولات</label>
+        </th>
+        <th>
+            <label>قیمت کل</label>
+        </th>
+        <th>
+            <label>پرداخت شده؟</label>
+        </th>
+        <th></th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (Model.Orders != null)
+    {
+        @foreach (var item in Model.Orders)
+        {
+            <tr>
+
+
+                <td>
+                    @item.OrderPlaced
+                </td>
+                <td>
+                    @item.itemCount
+                </td>
+                <td>
+                    <b class="text-success">@item.totalPrice تومان </b>
+                </td>
+                <td>
+                    @item.OrderPaid
+                    @if (@item.OrderPaid == false)
+                    {
+                        <form method="post" asp-page-handler="pay">
+                            <input type="hidden" name="orderId" value="@item.Id"/>
+                            <button type="submit" class="btn btn-info">
+                                <i class="fa fa-payment"></i>
+                                پرداخت
+                            </button>
+                        </form>
+                    }
+                </td>
+                <td class="row">
+                    <a class="" asp-page="/order/detail" asp-route-orderId="@item.Id"> جزئیات</a>
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <p>NOT Order</p>
+    }
+    </tbody>
+
+</table>
