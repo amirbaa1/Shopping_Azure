@@ -24,7 +24,7 @@ https://bugeto.net
 ### Microservice
   - ProductService
   - BasketService
-  - OrderService
+  - OrderService (smtp email service kay api elastic email)
   - DiscountService (Grpc)
   - PayService (DDD)
   - ApiGateway (Code New)
