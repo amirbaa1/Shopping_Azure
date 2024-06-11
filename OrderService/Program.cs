@@ -9,6 +9,8 @@ using OrderService.MessageBus;
 using OrderService.MessageBus.ReceivedMessage;
 using OrderService.MessageBus.ReceivedMessage.Payment;
 using OrderService.MessageBus.ReceivedMessage.UpdateProduct;
+using OrderService.Model;
+using OrderService.Repository.Mail;
 using OrderService.Repository.Order;
 using OrderService.Repository.Product;
 using Serilog;
@@ -30,6 +32,9 @@ builder.Services.AddTransient<IOrderdbContext, OrderdbContext>();
 builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<IRegisterOrderService, RegisterOrderService>();
 builder.Services.AddHostedService<ReceivedPaymentOfOrderService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
+builder.Services.AddSingleton<EmailSetting>();
+
 
 builder.Services.Configure<RabbitMqConfig>(builder.Configuration.GetSection("RabbitMq"));
 
