@@ -30,6 +30,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
             new Claim(JwtRegisteredClaimNames.Name, appUser.UserName),
             new Claim(JwtRegisteredClaimNames.Sub, appUser.Id),
             new Claim(JwtRegisteredClaimNames.Email, appUser.Email),
+            new Claim("scope", "orderService.fullAccess")
         };
 
         var tokenDescription = new SecurityTokenDescriptor
@@ -39,7 +40,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
             Subject = new ClaimsIdentity(claim),
             Expires = DateTime.Now.AddMinutes(10),
             SigningCredentials =
-                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
+                new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
         };
         var token = tokenHandler.CreateToken(tokenDescription);
 

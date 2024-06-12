@@ -44,10 +44,18 @@ builder.Services.AddHostedService<ReceivedUpdateProduct>();
 builder.Services.AddTransient<IMessageBus, MessageBus>();
 
 
+// builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//     .AddJwtBearer(op =>
+//     {
+//         op.Authority = "http://localhost:63936";
+//         op.Audience = "orderservice";
+//         op.RequireHttpsMetadata = false; // Disable HTTPS requirement for development
+//     });
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(op =>
     {
-        op.Authority = "http://localhost:63936";
+        op.Authority = "http://localhost:5093";
         op.Audience = "orderservice";
         op.RequireHttpsMetadata = false; // Disable HTTPS requirement for development
     });

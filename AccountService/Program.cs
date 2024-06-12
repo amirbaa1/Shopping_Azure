@@ -49,10 +49,19 @@ builder.Services.AddAuthentication(op =>
             new SymmetricSecurityKey(
                 Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("TokenAuthAPI:JWTOption:Secret")!)),
         ValidateLifetime = true,
-        ValidateAudience = false,
+        ValidateAudience = true,
         ValidateIssuer = true,
+        ValidIssuer = builder.Configuration["TokenAuthAPI:JWTOption:Issuer"],
+        ValidAudience = builder.Configuration["TokenAuthAPI:JWTOption:Audience"],
         ClockSkew = TimeSpan.Zero,
     };
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("GetOrder", policy =>
+        policy.RequireAuthenticatedUser()
+            .RequireClaim("scope", "orderService.fullAccess"));
 });
 //--------------------------------------//
 var app = builder.Build();
