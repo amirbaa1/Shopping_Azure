@@ -30,7 +30,9 @@ public class JwtTokenGenerator : IJwtTokenGenerator
             new Claim(JwtRegisteredClaimNames.Name, appUser.UserName),
             new Claim(JwtRegisteredClaimNames.Sub, appUser.Id),
             new Claim(JwtRegisteredClaimNames.Email, appUser.Email),
-            new Claim("scope", "orderService.fullAccess")
+            new Claim("scope", "orderService.fullAccess"),
+            new Claim("scope", "orderService.Management"),
+            new Claim("scope", "basketService.fullAccess")
         };
 
         var tokenDescription = new SecurityTokenDescriptor

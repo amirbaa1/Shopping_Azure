@@ -58,12 +58,41 @@ builder.Services.AddAuthentication(op =>
     };
 });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("GetOrder", policy =>
-        policy.RequireAuthenticatedUser()
-            .RequireClaim("scope", "orderService.fullAccess"));
-});
+builder.Services.AddIdentityServer()
+    .AddDeveloperSigningCredential()
+    .AddInMemoryClients(new List<Client>
+    {
+        new Client
+        {
+            ClientName = "Web API",
+            ClientId = "WebAPI",
+            ClientSecrets = { new Secret("secret".Sha256()) },
+            AllowedGrantTypes = GrantTypes.ClientCredentials,
+            AllowedScopes = { "orderService.fullAccess", "orderService.Management", "basketService.fullAccess" },
+        },
+    })
+    .AddInMemoryApiResources(new List<ApiResource>()
+    {
+        new ApiResource("orderservice", "order service api")
+        {
+            Scopes = { "orderService.Management" },
+        },
+        new ApiResource("basketservice", "BasketService API")
+        {
+            Scopes = { "basketService-fullAccess" }
+        }
+    })
+    .AddInMemoryApiScopes(new List<ApiScope>
+    {
+        new ApiScope("orderService.fullAccess"),
+        new ApiScope("orderService.Management"),
+        new ApiScope("basketService.fullAccess"),
+    })
+    .AddInMemoryIdentityResources(new List<IdentityResource>
+    {
+        new IdentityResources.OpenId(),
+        new IdentityResources.Profile(),
+    }).AddAspNetIdentity<AppUser>();
 //--------------------------------------//
 
 Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).CreateLogger();
@@ -80,6 +109,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseIdentityServer();
 
 app.UseAuthorization();
 app.UseAuthentication();
