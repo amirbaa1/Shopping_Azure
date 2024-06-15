@@ -1,3 +1,4 @@
+using System.Text;
 using App.Metrics;
 using App.Metrics.Formatters.Prometheus;
 using HealthChecks.UI.Client;
@@ -6,6 +7,7 @@ using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using ProductService.Data;
 using ProductService.Health;
 using ProductService.MessageBus.Message;
@@ -33,26 +35,57 @@ builder.Services.AddTransient<ICategoryService, CategoryService>();
 
 builder.Services.AddTransient<IMessageBus, RabbitMqMessageBus>();
 
+//------------------------identityServer4---------------//
+// builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//     .AddJwtBearer(op =>
+//     {
+//         op.Authority = "http://localhost:63936";
+//         op.Audience = "productservice";
+//         op.RequireHttpsMetadata = false;
+//     });
+
+// builder.Services.AddAuthorization(op =>
+// {
+//     op.AddPolicy("ProductAdmin",
+//         policy => policy.RequireClaim("scope", "productservice.admin"));
+// });
+//-----------------------------------------------------//
+
+
+//------------------------Identity Account.API-------------------//
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(op =>
     {
-        op.Authority = "http://localhost:63936";
-        op.Audience = "productservice";
+        op.Authority = "https://localhost:7148";
+        op.Audience = "webShop_client";
         op.RequireHttpsMetadata = false;
+        op.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = "webShop_Api",
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("TokenAuthAPI:JWTOption:Secret")!)),
+            ClockSkew = TimeSpan.Zero,
+        };
     });
 
 builder.Services.AddAuthorization(op =>
 {
     op.AddPolicy("ProductAdmin",
-        policy => policy.RequireClaim("scope", "productservice.admin"));
+        policy => policy.RequireClaim("scope", "productService.Management"));
 });
-
+//---------------------------------------------------------------//
 
 //-------------Health----------------//
 builder.Services.AddHealthChecks()
     // .AddCheck<DataBaseHealthCheck>("npgslq")
     .AddNpgSql(builder.Configuration["ConnectionStrings:ProdcutConnectionString"])
-    .AddIdentityServer(new Uri("http://localhost:63936"), name: "Identity Server");
+    // .AddIdentityServer(new Uri("http://localhost:63936"), name: "Identity Server")
+    .AddIdentityServer(new Uri("http://localhost:7148"), name: "Identity Costume Account.APi");
+
 
 builder.Services.AddHealthChecksUI(x =>
     {
@@ -93,25 +126,25 @@ Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configurat
 builder.Host.UseSerilog();
 //-------------- Metrics ---------------------------//
 
-var metrics = AppMetrics.CreateDefaultBuilder()
-    .OutputMetrics.AsPrometheusPlainText()
-    .OutputMetrics.AsPrometheusProtobuf()
-    .Build();
-
-builder.Host.UseMetricsWebTracking();
-builder.Services.AddMetrics(metrics);
-builder.Services.AddMetricsTrackingMiddleware();
-builder.Services.AddMetricsEndpoints(options =>
-{
-    options.MetricsTextEndpointOutputFormatter = new MetricsPrometheusTextOutputFormatter();
-    options.MetricsEndpointOutputFormatter = new MetricsPrometheusProtobufOutputFormatter();
-    options.EnvironmentInfoEndpointEnabled = false;
-});
-
-
-builder.Services.AddMetrics();
-builder.Services.AddMetricsTrackingMiddleware();
-builder.Services.Configure<KestrelServerOptions>(op => { op.AllowSynchronousIO = true; });
+// var metrics = AppMetrics.CreateDefaultBuilder()
+//     .OutputMetrics.AsPrometheusPlainText()
+//     .OutputMetrics.AsPrometheusProtobuf()
+//     .Build();
+//
+// builder.Host.UseMetricsWebTracking();
+// builder.Services.AddMetrics(metrics);
+// builder.Services.AddMetricsTrackingMiddleware();
+// builder.Services.AddMetricsEndpoints(options =>
+// {
+//     options.MetricsTextEndpointOutputFormatter = new MetricsPrometheusTextOutputFormatter();
+//     options.MetricsEndpointOutputFormatter = new MetricsPrometheusProtobufOutputFormatter();
+//     options.EnvironmentInfoEndpointEnabled = false;
+// });
+//
+//
+// builder.Services.AddMetrics();
+// builder.Services.AddMetricsTrackingMiddleware();
+// builder.Services.Configure<KestrelServerOptions>(op => { op.AllowSynchronousIO = true; });
 //---------------------------------------------//
 
 
@@ -134,7 +167,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.UseMetricsAllMiddleware();
+// app.UseMetricsAllMiddleware();
 
 app.MapHealthChecks("/health", new HealthCheckOptions
 {
