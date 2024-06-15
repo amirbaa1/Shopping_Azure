@@ -1,9 +1,11 @@
+using System.Text;
 using App.Metrics.AspNetCore;
 using App.Metrics.Formatters.Prometheus;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using OrderService.Data;
 using OrderService.MessageBus;
 using OrderService.MessageBus.ReceivedMessage;
@@ -43,26 +45,59 @@ builder.Services.AddHostedService<ReceivedUpdateProduct>();
 
 builder.Services.AddTransient<IMessageBus, MessageBus>();
 
+//-------------Identity Server ------------------//
+// builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//     .AddJwtBearer(op =>
+//     {
+//         op.Authority = "http://localhost:63936";
+//         op.Audience = "orderservice";
+//         op.RequireHttpsMetadata = false; // Disable HTTPS requirement for development
+//     });
+
+// builder.Services.AddAuthorization(op =>
+// {
+//     op.AddPolicy("ManagementOrder", policy =>
+//         policy.RequireClaim("scope", "orderService.Management"));
+// });
+//
+// builder.Services.AddAuthorization(op =>
+// {
+//     op.AddPolicy("GetOrder", policy =>
+//         policy.RequireClaim("scope", "orderService.getorders"));
+// });
+//-----------------------------------------------//
+
+//-----------------identityCustome (Account.API)-------------------//
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(op =>
     {
-        op.Authority = "http://localhost:63936";
-        op.Audience = "orderservice";
-        op.RequireHttpsMetadata = false; // Disable HTTPS requirement for development
+        op.Authority = "https://localhost:7148";
+        op.Audience = "webShop_client";
+        op.RequireHttpsMetadata = false;
+        op.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = "webShop_Api",
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.ASCII.GetBytes(builder.Configuration.GetValue<string>("TokenAuthAPI:JWTOption:Secret")!)),
+            ClockSkew = TimeSpan.Zero,
+        };
     });
-
-builder.Services.AddAuthorization(op =>
-{
-    op.AddPolicy("ManagementOrder", policy =>
-        policy.RequireClaim("scope", "orderService.Management"));
-});
-
 builder.Services.AddAuthorization(op =>
 {
     op.AddPolicy("GetOrder", policy =>
-        policy.RequireClaim("scope", "orderService.getorders"));
+        policy.RequireClaim("scope", "orderService.fullAccess"));
+    
+    op.AddPolicy("ManagementOrder", policy =>
+    {
+        policy.RequireClaim("scope", "orderService.Management");
+    });
 });
+//-----------------------------------------------------------------//
 
 
 Log.Logger = new LoggerConfiguration().ReadFrom.Configuration(builder.Configuration).CreateLogger();
