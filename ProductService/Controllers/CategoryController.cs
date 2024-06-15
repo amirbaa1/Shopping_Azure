@@ -23,7 +23,6 @@ namespace ProductService.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-
             // _metrics.Measure.Counter.Increment(new App.Metrics.Counter.CounterOptions
             // {
             //     Name = "get_list_producet_category"
@@ -35,13 +34,6 @@ namespace ProductService.Controllers
             _logger.LogWarning("Log warning");
             _logger.LogError("ERoror");
             return Ok(data);
-        }
-
-        [HttpPost]
-        public IActionResult Post([FromBody] CategoryDto categoryDto)
-        {
-            _categoryService.AddNewCatrgory(categoryDto);
-            return Ok();
         }
     }
 }
