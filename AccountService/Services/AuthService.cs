@@ -91,4 +91,80 @@ public class AuthService : IAuthService
             };
         }
     }
+
+    public async Task<ResponseDto> ProfileService(string Id)
+    {
+        var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == Id);
+        if (user == null)
+        {
+            return new ResponseDto
+
+            {
+                IsSuccess = false,
+                Message = "NotFound!",
+                Result = null
+            };
+        }
+
+        var userDto = new ProfileDto
+        {
+            UserID = user.Id,
+            Email = user.Email,
+            UserName = user.UserName,
+            FirstName = user.FirstName,
+            LastName = user.LastName,
+            NumberPhone = user.PhoneNumber,
+            Image = user.Image,
+            PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+            EmailConfirmed = user.EmailConfirmed,
+            AccessFailedCount = user.AccessFailedCount,
+            LockoutEnabled = user.LockoutEnabled,
+            TwoFactorEnabled = user.TwoFactorEnabled
+        };
+        return new ResponseDto
+        {
+            IsSuccess = true,
+            Message = "ProfileService",
+            Result = userDto
+        };
+    }
+
+    public async Task<ResponseDto> UpdateProfile(string id, UpdateProfile updateProfiles)
+    {
+        var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == id);
+        if (user == null)
+        {
+            return new ResponseDto
+
+            {
+                IsSuccess = false,
+                Message = "NotFound!",
+                Result = null
+            };
+        }
+
+        user.FirstName = updateProfiles.FirstName;
+        user.LastName = updateProfiles.LastName;
+        user.Image = updateProfiles.Image;
+
+        var result = await _userManager.UpdateAsync(user);
+        if (result.Succeeded)
+        {
+            return new ResponseDto
+            {
+                IsSuccess = true,
+                Message = "Profile updated successfully!",
+                Result = user
+            };
+        }
+        else
+        {
+            return new ResponseDto
+            {
+                IsSuccess = false,
+                Message = "Update failed!",
+                Result = result.Errors
+            };
+        }
+    }
 }

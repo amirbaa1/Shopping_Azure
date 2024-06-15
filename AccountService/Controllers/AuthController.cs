@@ -39,6 +39,7 @@ public class AuthController : ControllerBase
         _responseDto.Result = user;
         return Ok(_responseDto);
     }
+
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginModel loginModel)
     {
@@ -52,5 +53,24 @@ public class AuthController : ControllerBase
 
         _responseDto.Result = user;
         return Ok(_responseDto);
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Profile(string id)
+    {
+        var user = await _authService.ProfileService(id);
+        return Ok(user);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateProfile(string id, [FromBody] UpdateProfile updateProfile)
+    {
+        var user = await _authService.UpdateProfile(id, updateProfile);
+        if (user.IsSuccess)
+        {
+            return Ok(user);
+        }
+
+        return BadRequest(user);
     }
 }
