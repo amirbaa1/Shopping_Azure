@@ -80,6 +80,10 @@ builder.Services.AddIdentityServer()
         new ApiResource("basketservice", "BasketService API")
         {
             Scopes = { "basketService-fullAccess" }
+        },
+        new ApiResource("productservice", "ProductService management Api")
+        {
+            Scopes = { "productService.Management" }
         }
     })
     .AddInMemoryApiScopes(new List<ApiScope>
@@ -87,6 +91,7 @@ builder.Services.AddIdentityServer()
         new ApiScope("orderService.fullAccess"),
         new ApiScope("orderService.Management"),
         new ApiScope("basketService.fullAccess"),
+        new ApiScope("productService.Management")
     })
     .AddInMemoryIdentityResources(new List<IdentityResource>
     {

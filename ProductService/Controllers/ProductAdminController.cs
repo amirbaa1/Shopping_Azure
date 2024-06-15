@@ -16,15 +16,25 @@ namespace ProductService.Controllers
         private readonly IMessageBus _messageBus;
         private readonly IConfiguration _configuration;
         private readonly ILogger<ProductAdminController> _logger;
+        private readonly ICategoryService _categoryService;
 
-        public ProductAdminController(IProductService productService, IMessageBus messageBus, ILogger<ProductAdminController> logger)
+        public ProductAdminController(IProductService productService, IMessageBus messageBus,
+            ILogger<ProductAdminController> logger, ICategoryService categoryService)
         {
             _productService = productService;
             _messageBus = messageBus;
             _logger = logger;
+            _categoryService = categoryService;
         }
 
-        [HttpPost]
+        [HttpPost("category")]
+        public IActionResult Post([FromBody] CategoryDto categoryDto)
+        {
+            _categoryService.AddNewCatrgory(categoryDto);
+            return Ok();
+        }
+
+        [HttpPost("product")]
         public async Task<IActionResult> PostProduct([FromBody] AddNewProductDto addNewProductDto)
         {
             var productCheck = await _productService.AddProduct(addNewProductDto);

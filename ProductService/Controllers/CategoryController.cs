@@ -11,23 +11,22 @@ namespace ProductService.Controllers
     {
         private readonly ICategoryService _categoryService;
         private readonly ILogger<CategoryController> _logger;
-        private readonly IMetrics _metrics;
+        // private readonly IMetrics _metrics;
 
-        public CategoryController(ICategoryService categoryService, ILogger<CategoryController> logger, IMetrics metrics)
+        public CategoryController(ICategoryService categoryService, ILogger<CategoryController> logger)
         {
             _categoryService = categoryService;
             _logger = logger;
-            _metrics = metrics;
+            // _metrics = metrics;
         }
 
         [HttpGet]
         public IActionResult Get()
         {
-
-            _metrics.Measure.Counter.Increment(new App.Metrics.Counter.CounterOptions
-            {
-                Name = "get_list_producet_category"
-            });
+            // _metrics.Measure.Counter.Increment(new App.Metrics.Counter.CounterOptions
+            // {
+            //     Name = "get_list_producet_category"
+            // });
 
 
             var data = _categoryService.GetCategories();
@@ -35,13 +34,6 @@ namespace ProductService.Controllers
             _logger.LogWarning("Log warning");
             _logger.LogError("ERoror");
             return Ok(data);
-        }
-
-        [HttpPost]
-        public IActionResult Post([FromBody] CategoryDto categoryDto)
-        {
-            _categoryService.AddNewCatrgory(categoryDto);
-            return Ok();
         }
     }
 }
