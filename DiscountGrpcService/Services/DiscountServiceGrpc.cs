@@ -86,6 +86,43 @@ namespace DiscountGrpcService.Services
                 Message = "اطلاعات تخفیف"
             });
         }
-        
+
+        public override Task<ResultGetDiscount> GetDiscountAll(RequestGetDiscount request, ServerCallContext context)
+        {
+            var data = _discountService.GetDiscount();
+
+            if (data == null)
+            {
+                return Task.FromResult(new ResultGetDiscount
+                {
+                    Data = null,
+                    IsSuccess = false,
+                    Message = "کد تخفیف پیدا نشد"
+                });
+            }
+
+            foreach (var disclist in data.Result)
+            {
+                return Task.FromResult(new ResultGetDiscount
+                {
+                    Data = new DiscountInfo
+                    {
+                        Amount = disclist.Amount,
+                        Code = disclist.Code,
+                        Id = disclist.Id.ToString(),
+                        Used = disclist.Used,
+                    },
+                    IsSuccess = true,
+                    Message = "اطلاعات تخفیف"
+                });
+            }
+
+            return Task.FromResult(new ResultGetDiscount
+            {
+                Data = null,
+                IsSuccess = false,
+                Message = "کد تخفیف پیدا نشد"
+            });
+        }
     }
 }

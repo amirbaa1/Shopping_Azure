@@ -16,6 +16,22 @@ public class DiscountService : IDiscountService
         _context = context;
     }
 
+    public async Task<List<DiscountDto>> GetDiscount()
+    {
+        var discountCursor = await _context.discounts.Find(x => true).ToListAsync();
+
+        var discountDtos = discountCursor.Select(d => new DiscountDto
+        {
+            Id = d.Id,
+            Code = d.Code,
+            Amount = d.Amount,
+            Used = d.Used
+        }).ToList();
+
+        return discountDtos;
+        
+    }
+
     public async Task<DiscountDto> GetDiscountByCode(string code)
     {
         var getDisc = await _context.discounts.Find(x => x.Code == code).FirstOrDefaultAsync();
@@ -60,7 +76,7 @@ public class DiscountService : IDiscountService
 
         getDisc.Used = true;
         var filter = Builders<DiscountCode>.Filter.Eq(x => x.Id, Id);
-        _context.discounts.ReplaceOne(filter,getDisc);
+        _context.discounts.ReplaceOne(filter, getDisc);
         return true;
     }
 
