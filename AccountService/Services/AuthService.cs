@@ -1,6 +1,7 @@
 using AccountService.Data;
 using AccountService.Model;
 using AccountService.Model.Dto;
+using AccountService.Services.Mail;
 using AccountService.Services.Token;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,14 +14,16 @@ public class AuthService : IAuthService
     private readonly AccountDbContext _context;
     private readonly UserManager<AppUser> _userManager;
     private readonly IJwtTokenGenerator _jwtTokenGenerator;
+    private readonly IEmailService _emailService;
 
     public AuthService(ILogger<AuthService> logger, AccountDbContext context, UserManager<AppUser> userManager,
-        IJwtTokenGenerator jwtTokenGenerator)
+        IJwtTokenGenerator jwtTokenGenerator, IEmailService emailService)
     {
         _logger = logger;
         _context = context;
         _userManager = userManager;
         _jwtTokenGenerator = jwtTokenGenerator;
+        _emailService = emailService;
     }
 
     public async Task<string> Register(RegisterModel register)
@@ -165,6 +168,44 @@ public class AuthService : IAuthService
                 Message = "Update failed!",
                 Result = result.Errors
             };
+        }
+    }
+
+    public async Task<string> SendActivateEmail(string userId)
+    {
+        try
+        {
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId);
+
+            if (user == null)
+            {
+                return "NotFound";
+            }
+
+            if (user.EmailConfirmed == true)
+            {
+                return "ایمیل اکتیو است.";
+            }
+
+
+            var createActEmail = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            var emailUser = new EmailModel
+            {
+                Body = $"userId= {userId}    Token={createActEmail}",
+                From = "amir.2002.ba@gmail.com",
+                Sub = "activate email",
+                To = user.Email,
+            };
+            await _emailService.SendEmail(emailUser);
+            _logger.LogWarning($"Send Email {user.Email}");
+            return "Send Email";
+        }
+        catch (Exception e)
+        {
+            _logger.LogError($"Error in code :{e.Message}");
+
+            return e.Message;
         }
     }
 }

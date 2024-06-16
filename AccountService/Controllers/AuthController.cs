@@ -3,6 +3,7 @@ using AccountService.Model.Dto;
 using AccountService.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AccountService.Controllers;
 
@@ -72,5 +73,40 @@ public class AuthController : ControllerBase
         }
 
         return BadRequest(user);
+    }
+
+    [HttpPost("activate/{userId}")]
+    public async Task<IActionResult> ConfirmationEmail(string userId)
+    {
+        var userConfirm = await _authService.SendActivateEmail(userId);
+        if (userConfirm == null)
+        {
+            return BadRequest(userConfirm);
+        }
+
+        return Ok(userConfirm);
+    }
+
+    [HttpPost("ConfirmEmail")]
+    public async Task<IActionResult> ConfirmEmail(ConfirmEmail confirmEmail)
+    {
+        var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == confirmEmail.userId);
+
+        if (user == null)
+        {
+            return NotFound("NotFound User.");
+        }
+
+        var result = await _userManager.ConfirmEmailAsync(user, confirmEmail.Token);
+        // _logger.LogInformation($"Token :{confirmEmail.Token}");
+        _logger.LogInformation($"Result : {result}");
+
+        if (!result.Succeeded)
+        {
+            return BadRequest("No active Email.");
+        }
+
+        // تایید ایمیل با موفقیت انجام شده است
+        return Ok($"Email confirmed successfully, {user}");
     }
 }

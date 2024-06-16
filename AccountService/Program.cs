@@ -3,6 +3,7 @@ using AccountService.Data;
 using AccountService.Model;
 using AccountService.Model.Dto;
 using AccountService.Services;
+using AccountService.Services.Mail;
 using AccountService.Services.Token;
 using IdentityServer4.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -34,7 +35,8 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddSingleton<ResponseDto>();
 builder.Services.Configure<JwtOption>(builder.Configuration.GetSection("TokenAuthAPI:JWTOption"));
-
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddSingleton<EmailSetting>();
 // ----------------- JWT -------------------//
 builder.Services.AddAuthentication(op =>
 {
