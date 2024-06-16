@@ -5,6 +5,7 @@ namespace DiscountGrpcService.Repository;
 
 public interface IDiscountService
 {
+    Task<List<DiscountDto>> GetDiscount();
     Task<DiscountDto> GetDiscountByCode(string code);
     Task<DiscountDto> GetDiscountById(Guid id);
     bool UseDiscount(Guid Id);

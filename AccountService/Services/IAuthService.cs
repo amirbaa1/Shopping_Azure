@@ -13,4 +13,6 @@ public interface IAuthService
     Task<ResponseDto> ProfileService(string Id);
 
     Task<ResponseDto> UpdateProfile(string id,UpdateProfile updateProfiles);
+
+    Task<string> SendActivateEmail(string userId);
 }

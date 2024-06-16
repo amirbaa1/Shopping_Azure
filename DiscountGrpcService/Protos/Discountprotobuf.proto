@@ -4,6 +4,7 @@ option csharp_namespace = "DiscountGrpcService.Protos";
 
 service DiscountGrpcServiceProto{
   rpc GetDiscountByCode(RequestGetDiscountByCode) returns(ResultGetDiscountByCode);
+  rpc GetDiscountAll(RequestGetDiscount) returns(ResultGetDiscount);
   rpc GetDiscountById(RequestGetDiscountById)returns(ResultGetDiscountByCode);
   rpc UseDiscount(RequestUseDiscount) returns(ResultUseDiscount);
   rpc AddDiscount(RequestAddDiscount) returns(ResultAddDiscount);
@@ -15,6 +16,10 @@ message RequestGetDiscountByCode{
 
 message RequestGetDiscountById{
   string Id = 1;
+}
+
+message RequestGetDiscount{
+
 }
 
 message ResultGetDiscountByCode{
@@ -45,4 +50,10 @@ message RequestAddDiscount{
 
 message ResultAddDiscount{
   bool isSuccess = 1;
+}
+
+message ResultGetDiscount{
+  DiscountInfo Data = 1;
+  bool isSuccess = 2;
+  string Message = 3;
 }
